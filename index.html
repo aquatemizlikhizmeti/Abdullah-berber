@@ -1,0 +1,2094 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Barber Yönetim Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4a762;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SİDEBAR */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 0;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #3a506b;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            color: var(--secondary-color);
+        }
+
+        .logo p {
+            font-size: 13px;
+            color: #bbb;
+            margin-top: 5px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 5px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .menu a:hover, .menu a.active {
+            background-color: #34495e;
+            border-left: 4px solid var(--secondary-color);
+            color: white;
+        }
+
+        .menu i {
+            width: 25px;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .menu-badge {
+            position: absolute;
+            right: 20px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* ANA İÇERİK */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        /* ÜST BAR */
+        .top-bar {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .top-bar h1 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-bar h1 i {
+            color: var(--secondary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification-icon {
+            position: relative;
+            font-size: 22px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 11px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* DURUM KARTLARI */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            border-left: 5px solid var(--info-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.today {
+            border-left-color: var(--success-color);
+        }
+
+        .stat-card.pending {
+            border-left-color: var(--warning-color);
+        }
+
+        .stat-card.customers {
+            border-left-color: var(--danger-color);
+        }
+
+        .stat-card.revenue {
+            border-left-color: var(--secondary-color);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-right: 20px;
+            color: white;
+            background-color: var(--info-color);
+        }
+
+        .stat-card.today .stat-icon { background-color: var(--success-color); }
+        .stat-card.pending .stat-icon { background-color: var(--warning-color); }
+        .stat-card.customers .stat-icon { background-color: var(--danger-color); }
+        .stat-card.revenue .stat-icon { background-color: var(--secondary-color); }
+
+        .stat-info h3 {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+
+        /* TABLO STİLLERİ */
+        .table-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: var(--secondary-color);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 1px solid #ddd;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        thead {
+            background-color: var(--light-color);
+        }
+
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--info-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 14px;
+        }
+
+        .customer-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .customer-details p {
+            color: #7f8c8d;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .customer-id {
+            font-weight: 600;
+            color: var(--secondary-color);
+            background-color: #fff9e6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .service-badge {
+            background-color: #e8f4fc;
+            color: var(--info-color);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-badge.cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .payment-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .payment-badge.paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .payment-badge.unpaid {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-confirm {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .btn-confirm:hover {
+            background-color: #c3e6cb;
+        }
+
+        .btn-cancel {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f5c6cb;
+        }
+
+        .btn-edit {
+            background-color: #e8f4fc;
+            color: var(--info-color);
+        }
+
+        .btn-edit:hover {
+            background-color: #d1ecf1;
+        }
+
+        .btn-delete {
+            background-color: #f8d7da;
+            color: var(--danger-color);
+        }
+
+        .btn-delete:hover {
+            background-color: #f5c6cb;
+        }
+
+        /* AYARLAR BÖLÜMÜ */
+        .settings-section {
+            display: none;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .settings-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .settings-card h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(212, 167, 98, 0.1);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--success-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .working-hours-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .day-schedule {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .day-schedule h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-inputs input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* TAKVİM YÖNETİMİ */
+        .calendar-management {
+            display: none;
+        }
+
+        .calendar-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-picker {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .time-picker {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 120px;
+        }
+
+        .blocked-slots-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .blocked-slot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .blocked-slot-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* MODAL STİLLERİ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        /* MOBİL MENÜ BUTONU */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .sidebar {
+                left: -250px;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .working-hours-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                padding: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SOL SİDEBAR MENÜ -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>Elite Barber</h2>
+            <p>Yönetim Paneli</p>
+        </div>
+        
+        <ul class="menu">
+            <li><a href="#" class="active" onclick="showSection('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> <span>Gösterge Paneli</span>
+            </a></li>
+            <li><a href="#" onclick="showSection('appointments')">
+                <i class="fas fa-calendar-alt"></i> <span>Randevular</span>
+                <span class="menu-badge" id="pending-badge">0</span>
+            </a></li>
+            <li><a href="#" onclick="showSection('customers')">
+                <i class="fas fa-users"></i> <span>Müşteriler</span>
+                <span class="menu-badge" id="customer-badge">0</span>
+            </a></li>
+            <li><a href="#" onclick="showSection('settings')">
+                <i class="fas fa-cog"></i> <span>Sistem Ayarları</span>
+            </a></li>
+            <li><a href="#" onclick="showSection('calendar')">
+                <i class="fas fa-calendar-times"></i> <span>Takvim Yönetimi</span>
+            </a></li>
+            <li><a href="index.html" target="_blank">
+                <i class="fas fa-home"></i> <span>Müşteri Sayfası</span>
+            </a></li>
+        </ul>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="#" style="display: inline-flex; align-items: center; gap: 10px; background-color: #e74c3c; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 500; transition: all 0.3s;">
+                <i class="fas fa-sign-out-alt"></i> <span>Çıkış Yap</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- ANA İÇERİK -->
+    <div class="main-content">
+        <!-- ÜST BAR -->
+        <div class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-user-cog"></i> <span id="page-title">Gösterge Paneli</span></h1>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="notification-icon" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-badge">0</span>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <h4>Yönetici</h4>
+                        <p style="color: #7f8c8d; font-size: 14px;">Sistem Yöneticisi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GÖSTERGE PANELİ -->
+        <div id="dashboard-section" class="content-section">
+            <!-- DURUM KARTLARI -->
+            <div class="stats-cards">
+                <div class="stat-card today">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="today-count">0</h3>
+                        <p>Bugünün Randevuları</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pending-count">0</h3>
+                        <p>Bekleyen Randevu</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card customers">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-customers">0</h3>
+                        <p>Toplam Müşteri</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-appointments">0</h3>
+                        <p>Toplam Randevu</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- YAKLAŞAN RANDEVULAR -->
+            <div class="table-container">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Yaklaşan Randevular</h2>
+                    <div class="filters">
+                        <button class="filter-btn active" onclick="filterAppointments('today')">Bugün</button>
+                        <button class="filter-btn" onclick="filterAppointments('tomorrow')">Yarın</button>
+                        <button class="filter-btn" onclick="filterAppointments('week')">Bu Hafta</button>
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Müşteri & No</th>
+                            <th>Tarih & Saat</th>
+                            <th>Hizmet</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcoming-appointments">
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- RANDEVULAR SAYFASI -->
+        <div id="appointments-section" class="content-section" style="display: none;">
+            <div class="table-container">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> Tüm Randevular</h2>
+                    <div class="filters">
+                        <button class="filter-btn active" onclick="filterAllAppointments('all')">Tümü</button>
+                        <button class="filter-btn" onclick="filterAllAppointments('today')">Bugün</button>
+                        <button class="filter-btn" onclick="filterAllAppointments('pending')">Bekleyen</button>
+                        <button class="filter-btn" onclick="filterAllAppointments('confirmed')">Onaylı</button>
+                        <button class="btn btn-delete" onclick="clearAllAppointments()"><i class="fas fa-trash"></i> Tümünü Temizle</button>
+                    </div>
+                </div>
+                
+                <table id="all-appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Müşteri & No</th>
+                            <th>İletişim</th>
+                            <th>Tarih & Saat</th>
+                            <th>Hizmet</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- MÜŞTERİLER SAYFASI -->
+        <div id="customers-section" class="content-section" style="display: none;">
+            <div class="table-container">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Müşteri Yönetimi</h2>
+                    <div class="filters">
+                        <input type="text" class="form-control" placeholder="Müşteri ara..." id="customer-search" style="padding: 8px 15px; border-radius: 8px; border: 1px solid #ddd; width: 250px;">
+                    </div>
+                </div>
+                
+                <table id="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Müşteri Bilgileri</th>
+                            <th>İletişim</th>
+                            <th>Toplam Randevu</th>
+                            <th>Son Randevu</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- SİSTEM AYARLARI -->
+        <div id="settings-section" class="content-section" style="display: none;">
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3><i class="fas fa-store"></i> İşletme Durumu</h3>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 15px;">
+                            <span>İşletme Açık/Kapalı</span>
+                            <label class="switch">
+                                <input type="checkbox" id="businessStatus">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="font-size: 13px; color: #666; margin-top: 8px;">
+                            Kapalı konuma getirirseniz, müşteri sayfasında "Bugün kapalıyız" mesajı gösterilir.
+                        </p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Yemek Saati</label>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <input type="time" id="breakStart" class="form-control" value="13:00">
+                            <span>-</span>
+                            <input type="time" id="breakEnd" class="form-control" value="14:00">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-confirm" style="width: 100%;" onclick="saveBusinessSettings()">
+                        <i class="fas fa-save"></i> Ayarları Kaydet
+                    </button>
+                </div>
+                
+                <div class="settings-card">
+                    <h3><i class="fas fa-clock"></i> Çalışma Saatleri</h3>
+                    <div class="working-hours-grid" id="workingHoursGrid">
+                        <!-- JavaScript ile doldurulacak -->
+                    </div>
+                    <button class="btn btn-confirm" style="width: 100%; margin-top: 20px;" onclick="saveWorkingHours()">
+                        <i class="fas fa-save"></i> Çalışma Saatlerini Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAKVİM YÖNETİMİ -->
+        <div id="calendar-section" class="content-section" style="display: none;">
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3><i class="fas fa-calendar-times"></i> Kapalı Günler</h3>
+                    <div class="form-group">
+                        <label>Kapalı Gün Ekle</label>
+                        <input type="date" id="closedDate" class="form-control">
+                        <button class="btn btn-edit" style="width: 100%; margin-top: 10px;" onclick="addClosedDay()">
+                            <i class="fas fa-plus"></i> Kapalı Gün Ekle
+                        </button>
+                    </div>
+                    
+                    <div class="blocked-slots-list" id="closedDaysList">
+                        <!-- JavaScript ile doldurulacak -->
+                    </div>
+                </div>
+                
+                <div class="settings-card">
+                    <h3><i class="fas fa-ban"></i> Engellenmiş Saatler</h3>
+                    <div class="form-group">
+                        <label>Belirli Bir Saati Engelle</label>
+                        <div class="calendar-controls">
+                            <input type="date" id="blockDate" class="date-picker">
+                            <input type="time" id="blockTime" class="time-picker">
+                            <button class="btn btn-cancel" onclick="blockTimeSlot()">
+                                <i class="fas fa-ban"></i> Saati Engelle
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="blocked-slots-list" id="blockedSlotsList">
+                        <!-- JavaScript ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MÜŞTERİ DETAY MODALI -->
+    <div class="modal" id="customer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> Müşteri Detayları</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="customer-modal-body">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- RANDEVU DETAY MODALI -->
+    <div class="modal" id="appointment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-check"></i> Randevu Detayları</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="appointment-modal-body">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- BİLDİRİMLER MODALI -->
+    <div class="modal" id="notifications-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-bell"></i> Bildirimler</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="notifications-body">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LOCALSTORAGE ANAHTARLARI
+        const SYSTEM_SETTINGS_KEY = 'berberSystemSettings';
+        const APPOINTMENTS_KEY = 'berberAppointments';
+        const CLOSED_DAYS_KEY = 'berberClosedDays';
+        const BLOCKED_SLOTS_KEY = 'berberBlockedSlots';
+        
+        // Varsayılan ayarlar
+        const defaultSettings = {
+            isOpen: true,
+            workingHours: {
+                monday: { start: "09:00", end: "20:00" },
+                tuesday: { start: "09:00", end: "20:00" },
+                wednesday: { start: "09:00", end: "20:00" },
+                thursday: { start: "09:00", end: "20:00" },
+                friday: { start: "09:00", end: "20:00" },
+                saturday: { start: "09:00", end: "21:00" },
+                sunday: { start: "00:00", end: "00:00" }
+            },
+            breakTime: { start: "13:00", end: "14:00" }
+        };
+        
+        // LOCALSTORAGE FONKSİYONLARI
+        function getSystemSettings() {
+            const settings = localStorage.getItem(SYSTEM_SETTINGS_KEY);
+            return settings ? JSON.parse(settings) : defaultSettings;
+        }
+        
+        function saveSystemSettings(settings) {
+            localStorage.setItem(SYSTEM_SETTINGS_KEY, JSON.stringify(settings));
+        }
+        
+        function getAppointmentsFromStorage() {
+            const appointments = localStorage.getItem(APPOINTMENTS_KEY);
+            return appointments ? JSON.parse(appointments) : [];
+        }
+        
+        function saveAppointmentsToStorage(appointments) {
+            localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
+        }
+        
+        function getClosedDays() {
+            const closedDays = localStorage.getItem(CLOSED_DAYS_KEY);
+            return closedDays ? JSON.parse(closedDays) : [];
+        }
+        
+        function saveClosedDays(closedDays) {
+            localStorage.setItem(CLOSED_DAYS_KEY, JSON.stringify(closedDays));
+        }
+        
+        function getBlockedSlots() {
+            const blockedSlots = localStorage.getItem(BLOCKED_SLOTS_KEY);
+            return blockedSlots ? JSON.parse(blockedSlots) : [];
+        }
+        
+        function saveBlockedSlots(blockedSlots) {
+            localStorage.setItem(BLOCKED_SLOTS_KEY, JSON.stringify(blockedSlots));
+        }
+        
+        // Tarih formatlama
+        function formatDateForStorage(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateForDisplay(dateStr) {
+            if (!dateStr) return 'Bilinmiyor';
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            return `${day < 10 ? '0' + day : day}.${month < 10 ? '0' + month : month}.${year}`;
+        }
+        
+        // Durum metni
+        function getStatusText(status) {
+            const statusMap = {
+                pending: 'Beklemede',
+                confirmed: 'Onaylandı',
+                cancelled: 'İptal Edildi',
+                completed: 'Tamamlandı'
+            };
+            return statusMap[status] || 'Beklemede';
+        }
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ayarları yükle
+            loadSystemSettings();
+            loadWorkingHours();
+            loadClosedDays();
+            loadBlockedSlots();
+            
+            // Verileri yükle
+            loadDashboardData();
+            loadAllAppointments();
+            loadCustomers();
+            
+            // Varsayılan bölüm
+            showSection('dashboard');
+            
+            // Müşteri arama
+            document.getElementById('customer-search').addEventListener('input', function(e) {
+                searchCustomers(e.target.value);
+            });
+        });
+        
+        // Bölümleri değiştir
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const sectionElement = document.getElementById(`${sectionId}-section`);
+            if (sectionElement) {
+                sectionElement.style.display = 'block';
+            }
+            
+            const pageTitle = document.getElementById('page-title');
+            const titles = {
+                dashboard: 'Gösterge Paneli',
+                appointments: 'Randevular',
+                customers: 'Müşteriler',
+                settings: 'Sistem Ayarları',
+                calendar: 'Takvim Yönetimi'
+            };
+            pageTitle.textContent = titles[sectionId] || 'Gösterge Paneli';
+            
+            const menuItems = document.querySelectorAll('.menu a');
+            menuItems.forEach(item => {
+                if (item.textContent.includes(titles[sectionId])) {
+                    item.classList.add('active');
+                }
+            });
+            
+            if (window.innerWidth <= 1200) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+        
+        // Sistem ayarlarını yükle
+        function loadSystemSettings() {
+            const settings = getSystemSettings();
+            document.getElementById('businessStatus').checked = settings.isOpen;
+            document.getElementById('breakStart').value = settings.breakTime.start;
+            document.getElementById('breakEnd').value = settings.breakTime.end;
+        }
+        
+        // Çalışma saatlerini yükle
+        function loadWorkingHours() {
+            const settings = getSystemSettings();
+            const workingHoursGrid = document.getElementById('workingHoursGrid');
+            const days = [
+                { key: 'monday', name: 'Pazartesi' },
+                { key: 'tuesday', name: 'Salı' },
+                { key: 'wednesday', name: 'Çarşamba' },
+                { key: 'thursday', name: 'Perşembe' },
+                { key: 'friday', name: 'Cuma' },
+                { key: 'saturday', name: 'Cumartesi' },
+                { key: 'sunday', name: 'Pazar' }
+            ];
+            
+            workingHoursGrid.innerHTML = '';
+            
+            days.forEach(day => {
+                const schedule = settings.workingHours[day.key];
+                const daySchedule = document.createElement('div');
+                daySchedule.className = 'day-schedule';
+                daySchedule.innerHTML = `
+                    <h4>${day.name}</h4>
+                    <div class="time-inputs">
+                        <input type="time" id="${day.key}-start" value="${schedule.start}" class="form-control">
+                        <span>-</span>
+                        <input type="time" id="${day.key}-end" value="${schedule.end}" class="form-control">
+                    </div>
+                `;
+                workingHoursGrid.appendChild(daySchedule);
+            });
+        }
+        
+        // Kapalı günleri yükle
+        function loadClosedDays() {
+            const closedDays = getClosedDays();
+            const closedDaysList = document.getElementById('closedDaysList');
+            closedDaysList.innerHTML = '';
+            
+            if (closedDays.length === 0) {
+                closedDaysList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Henüz kapalı gün eklenmemiş.</div>';
+                return;
+            }
+            
+            closedDays.forEach(date => {
+                const dayItem = document.createElement('div');
+                dayItem.className = 'blocked-slot-item';
+                dayItem.innerHTML = `
+                    <span>${formatDateForDisplay(date)}</span>
+                    <button class="btn btn-delete btn-sm" onclick="removeClosedDay('${date}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                `;
+                closedDaysList.appendChild(dayItem);
+            });
+        }
+        
+        // Engellenmiş saatleri yükle
+        function loadBlockedSlots() {
+            const blockedSlots = getBlockedSlots();
+            const blockedSlotsList = document.getElementById('blockedSlotsList');
+            blockedSlotsList.innerHTML = '';
+            
+            if (blockedSlots.length === 0) {
+                blockedSlotsList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Henüz engellenmiş saat yok.</div>';
+                return;
+            }
+            
+            blockedSlots.forEach(slot => {
+                const slotItem = document.createElement('div');
+                slotItem.className = 'blocked-slot-item';
+                slotItem.innerHTML = `
+                    <div>
+                        <div>${formatDateForDisplay(slot.date)}</div>
+                        <div style="font-size: 12px; color: #666;">${slot.time}</div>
+                    </div>
+                    <button class="btn btn-delete btn-sm" onclick="removeBlockedSlot('${slot.date}', '${slot.time}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                `;
+                blockedSlotsList.appendChild(slotItem);
+            });
+        }
+        
+        // İşletme ayarlarını kaydet
+        function saveBusinessSettings() {
+            const settings = getSystemSettings();
+            settings.isOpen = document.getElementById('businessStatus').checked;
+            settings.breakTime.start = document.getElementById('breakStart').value;
+            settings.breakTime.end = document.getElementById('breakEnd').value;
+            
+            saveSystemSettings(settings);
+            alert('Ayarlar başarıyla kaydedildi!');
+        }
+        
+        // Çalışma saatlerini kaydet
+        function saveWorkingHours() {
+            const settings = getSystemSettings();
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            
+            days.forEach(day => {
+                const startInput = document.getElementById(`${day}-start`);
+                const endInput = document.getElementById(`${day}-end`);
+                
+                if (startInput && endInput) {
+                    settings.workingHours[day] = {
+                        start: startInput.value,
+                        end: endInput.value
+                    };
+                }
+            });
+            
+            saveSystemSettings(settings);
+            alert('Çalışma saatleri başarıyla kaydedildi!');
+        }
+        
+        // Kapalı gün ekle
+        function addClosedDay() {
+            const dateInput = document.getElementById('closedDate');
+            const date = dateInput.value;
+            
+            if (!date) {
+                alert('Lütfen bir tarih seçin.');
+                return;
+            }
+            
+            const closedDays = getClosedDays();
+            
+            if (closedDays.includes(date)) {
+                alert('Bu tarih zaten kapalı günler listesinde.');
+                return;
+            }
+            
+            closedDays.push(date);
+            saveClosedDays(closedDays);
+            loadClosedDays();
+            dateInput.value = '';
+            alert('Kapalı gün başarıyla eklendi!');
+        }
+        
+        // Kapalı gün sil
+        function removeClosedDay(date) {
+            if (confirm('Bu kapalı günü silmek istediğinize emin misiniz?')) {
+                const closedDays = getClosedDays();
+                const filteredDays = closedDays.filter(d => d !== date);
+                saveClosedDays(filteredDays);
+                loadClosedDays();
+                alert('Kapalı gün silindi!');
+            }
+        }
+        
+        // Saat engelle
+        function blockTimeSlot() {
+            const dateInput = document.getElementById('blockDate');
+            const timeInput = document.getElementById('blockTime');
+            
+            const date = dateInput.value;
+            const time = timeInput.value;
+            
+            if (!date || !time) {
+                alert('Lütfen tarih ve saat seçin.');
+                return;
+            }
+            
+            const blockedSlots = getBlockedSlots();
+            
+            // Aynı tarih ve saatin zaten engellenip engellenmediğini kontrol et
+            const isAlreadyBlocked = blockedSlots.some(slot => slot.date === date && slot.time === time);
+            
+            if (isAlreadyBlocked) {
+                alert('Bu saat zaten engellenmiş.');
+                return;
+            }
+            
+            blockedSlots.push({ date, time });
+            saveBlockedSlots(blockedSlots);
+            loadBlockedSlots();
+            
+            dateInput.value = '';
+            timeInput.value = '';
+            alert('Saat başarıyla engellendi!');
+        }
+        
+        // Engellenmiş saat sil
+        function removeBlockedSlot(date, time) {
+            if (confirm('Bu engellenmiş saati kaldırmak istediğinize emin misiniz?')) {
+                const blockedSlots = getBlockedSlots();
+                const filteredSlots = blockedSlots.filter(slot => !(slot.date === date && slot.time === time));
+                saveBlockedSlots(filteredSlots);
+                loadBlockedSlots();
+                alert('Engellenmiş saat kaldırıldı!');
+            }
+        }
+        
+        // Gösterge paneli verilerini yükle
+        function loadDashboardData() {
+            const appointments = getAppointmentsFromStorage();
+            const today = new Date();
+            const todayFormatted = formatDateForStorage(today);
+            
+            // Bugünün randevuları
+            const todayAppointments = appointments.filter(app => app.date === todayFormatted);
+            document.getElementById('today-count').textContent = todayAppointments.length;
+            
+            // Bekleyen randevular
+            const pendingAppointments = appointments.filter(app => app.status === 'pending');
+            document.getElementById('pending-count').textContent = pendingAppointments.length;
+            document.getElementById('pending-badge').textContent = pendingAppointments.length;
+            
+            // Benzersiz müşteriler
+            const uniquePhones = [...new Set(appointments.map(app => app.phone))];
+            document.getElementById('total-customers').textContent = uniquePhones.length;
+            document.getElementById('customer-badge').textContent = uniquePhones.length;
+            
+            // Toplam randevu
+            document.getElementById('total-appointments').textContent = appointments.length;
+            
+            // Bildirim sayısı
+            updateNotificationCount();
+            
+            // Yaklaşan randevular
+            loadUpcomingAppointments();
+        }
+        
+        // Bildirim sayısını güncelle
+        function updateNotificationCount() {
+            const appointments = getAppointmentsFromStorage();
+            const today = new Date();
+            const todayFormatted = formatDateForStorage(today);
+            
+            const pendingCount = appointments.filter(app => app.status === 'pending').length;
+            const todayCount = appointments.filter(app => app.date === todayFormatted).length;
+            
+            const totalNotifications = pendingCount + (todayCount > 0 ? 1 : 0);
+            document.getElementById('notification-badge').textContent = totalNotifications;
+        }
+        
+        // Yaklaşan randevuları yükle
+        function loadUpcomingAppointments() {
+            const appointments = getAppointmentsFromStorage();
+            const tbody = document.getElementById('upcoming-appointments');
+            tbody.innerHTML = '';
+            
+            const today = new Date();
+            const todayFormatted = formatDateForStorage(today);
+            
+            const upcomingApps = appointments
+                .filter(app => app.date >= todayFormatted && app.status !== 'cancelled')
+                .sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time))
+                .slice(0, 5);
+            
+            if (upcomingApps.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                            <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px; display: block; color: #ddd;"></i>
+                            <p>Yaklaşan randevu bulunmuyor</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            upcomingApps.forEach(app => {
+                const row = createAppointmentRow(app);
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Tüm randevuları yükle
+        function loadAllAppointments() {
+            const appointments = getAppointmentsFromStorage();
+            const tbody = document.querySelector('#all-appointments-table tbody');
+            tbody.innerHTML = '';
+            
+            if (appointments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                            <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px; display: block; color: #ddd;"></i>
+                            <p>Henüz randevu bulunmuyor</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const sortedApps = [...appointments].sort((a, b) => 
+                new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time)
+            );
+            
+            sortedApps.forEach(app => {
+                const row = createAppointmentRow(app, true);
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Randevu satırı oluştur
+        function createAppointmentRow(app, showContact = false) {
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', app.id);
+            row.setAttribute('data-status', app.status || 'pending');
+            row.setAttribute('data-date', app.date);
+            
+            const statusClass = {
+                pending: 'pending',
+                confirmed: 'confirmed',
+                cancelled: 'cancelled',
+                completed: 'completed'
+            }[app.status] || 'pending';
+            
+            const initials = app.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const customerNo = 'MÜŞ-' + (app.phone ? app.phone.slice(-4) : '0000');
+            
+            row.innerHTML = `
+                <td>
+                    <div class="customer-info">
+                        <div class="customer-avatar">${initials}</div>
+                        <div class="customer-details">
+                            <h4>${app.name}</h4>
+                            <p><span class="customer-id">${customerNo}</span></p>
+                        </div>
+                    </div>
+                </td>
+                ${showContact ? `<td>${app.phone || 'Bilinmiyor'}</td>` : ''}
+                <td>
+                    <strong>${formatDateForDisplay(app.date)}</strong><br>
+                    <span style="color: #d4a762;">${app.time || 'Belirtilmemiş'}</span>
+                </td>
+                <td><span class="service-badge">${app.service || 'Genel Hizmet'}</span></td>
+                <td><span class="status-badge ${statusClass}">${getStatusText(app.status || 'pending')}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        ${(app.status === 'pending') ? `<button class="btn btn-confirm btn-sm" onclick="confirmAppointment(${app.id})"><i class="fas fa-check"></i> Onayla</button>` : ''}
+                        ${(app.status !== 'cancelled' && app.status !== 'completed') ? `<button class="btn btn-cancel btn-sm" onclick="cancelAppointment(${app.id})"><i class="fas fa-times"></i> İptal</button>` : ''}
+                        <button class="btn btn-edit btn-sm" onclick="viewAppointmentDetails(${app.id})"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-delete btn-sm" onclick="deleteAppointment(${app.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+        
+        // Müşterileri yükle
+        function loadCustomers() {
+            const appointments = getAppointmentsFromStorage();
+            const tbody = document.querySelector('#customers-table tbody');
+            tbody.innerHTML = '';
+            
+            if (appointments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                            <i class="fas fa-user-times" style="font-size: 48px; margin-bottom: 15px; display: block; color: #ddd;"></i>
+                            <p>Henüz müşteri bulunmuyor</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const uniqueCustomers = [];
+            const seenPhones = new Set();
+            
+            appointments.forEach(app => {
+                if (!seenPhones.has(app.phone)) {
+                    seenPhones.add(app.phone);
+                    
+                    const customerApps = appointments.filter(a => a.phone === app.phone);
+                    const lastAppointment = customerApps.length > 0 
+                        ? customerApps.sort((a, b) => new Date(b.date) - new Date(a.date))[0]
+                        : null;
+                    
+                    uniqueCustomers.push({
+                        phone: app.phone,
+                        name: app.name,
+                        totalAppointments: customerApps.length,
+                        lastVisit: lastAppointment ? lastAppointment.date : null
+                    });
+                }
+            });
+            
+            uniqueCustomers.forEach((customer, index) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-phone', customer.phone);
+                
+                const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const customerNo = 'MÜŞ-' + (index + 1).toString().padStart(3, '0');
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar">${initials}</div>
+                            <div class="customer-details">
+                                <h4>${customer.name}</h4>
+                                <p><span class="customer-id">${customerNo}</span></p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${customer.phone}</td>
+                    <td style="text-align: center; font-weight: 600;">${customer.totalAppointments}</td>
+                    <td>${customer.lastVisit ? formatDateForDisplay(customer.lastVisit) : 'Yok'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-edit btn-sm" onclick="viewCustomerDetails('${customer.phone}')"><i class="fas fa-eye"></i> Detay</button>
+                            <button class="btn btn-delete btn-sm" onclick="deleteCustomer('${customer.phone}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Müşteri ara
+        function searchCustomers(searchTerm) {
+            const rows = document.querySelectorAll('#customers-table tbody tr');
+            const term = searchTerm.toLowerCase();
+            
+            rows.forEach(row => {
+                const customerName = row.querySelector('.customer-details h4').textContent.toLowerCase();
+                const customerPhone = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (customerName.includes(term) || customerPhone.includes(term)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Randevu filtrele
+        function filterAllAppointments(filter) {
+            const rows = document.querySelectorAll('#all-appointments-table tbody tr');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            const today = new Date();
+            const todayStr = formatDateForStorage(today);
+            
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const date = row.getAttribute('data-date');
+                
+                let showRow = false;
+                
+                switch(filter) {
+                    case 'all':
+                        showRow = true;
+                        break;
+                    case 'today':
+                        showRow = (date === todayStr);
+                        break;
+                    case 'pending':
+                        showRow = (status === 'pending');
+                        break;
+                    case 'confirmed':
+                        showRow = (status === 'confirmed');
+                        break;
+                    default:
+                        showRow = true;
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+        
+        // Randevu onayla
+        function confirmAppointment(appointmentId) {
+            const appointments = getAppointmentsFromStorage();
+            const appointment = appointments.find(app => app.id == appointmentId);
+            
+            if (appointment) {
+                appointment.status = 'confirmed';
+                saveAppointmentsToStorage(appointments);
+                
+                const row = document.querySelector(`tr[data-id="${appointmentId}"]`);
+                if (row) {
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.className = 'status-badge confirmed';
+                    statusBadge.textContent = 'Onaylandı';
+                    
+                    const confirmBtn = row.querySelector('.btn-confirm');
+                    if (confirmBtn) confirmBtn.remove();
+                }
+                
+                updateNotificationCount();
+                alert('Randevu onaylandı!');
+            }
+        }
+        
+        // Randevu iptal et
+        function cancelAppointment(appointmentId) {
+            const appointments = getAppointmentsFromStorage();
+            const appointment = appointments.find(app => app.id == appointmentId);
+            
+            if (appointment && confirm(`${appointment.name} adlı müşterinin randevusunu iptal etmek istediğinize emin misiniz?`)) {
+                appointment.status = 'cancelled';
+                saveAppointmentsToStorage(appointments);
+                
+                const row = document.querySelector(`tr[data-id="${appointmentId}"]`);
+                if (row) {
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.className = 'status-badge cancelled';
+                    statusBadge.textContent = 'İptal Edildi';
+                    
+                    const actionButtons = row.querySelector('.action-buttons');
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-edit btn-sm" onclick="viewAppointmentDetails(${appointmentId})"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-delete btn-sm" onclick="deleteAppointment(${appointmentId})"><i class="fas fa-trash"></i></button>
+                    `;
+                }
+                
+                updateNotificationCount();
+                alert('Randevu iptal edildi!');
+            }
+        }
+        
+        // Randevu sil
+        function deleteAppointment(appointmentId) {
+            const appointments = getAppointmentsFromStorage();
+            const appointment = appointments.find(app => app.id == appointmentId);
+            
+            if (appointment && confirm('Bu randevuyu silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+                const filteredAppointments = appointments.filter(app => app.id != appointmentId);
+                saveAppointmentsToStorage(filteredAppointments);
+                
+                const row = document.querySelector(`tr[data-id="${appointmentId}"]`);
+                if (row) row.remove();
+                
+                const tbody = document.querySelector('#all-appointments-table tbody');
+                if (tbody.children.length === 0) {
+                    loadAllAppointments();
+                }
+                
+                updateNotificationCount();
+                alert('Randevu silindi!');
+            }
+        }
+        
+        // Tüm randevuları temizle
+        function clearAllAppointments() {
+            if (confirm('TÜM randevuları silmek istediğinize emin misiniz? Bu işlem GERİ ALINAMAZ!')) {
+                localStorage.removeItem(APPOINTMENTS_KEY);
+                loadAllAppointments();
+                loadCustomers();
+                loadDashboardData();
+                alert('Tüm randevular temizlendi!');
+            }
+        }
+        
+        // Müşteri detaylarını görüntüle
+        function viewCustomerDetails(phone) {
+            const appointments = getAppointmentsFromStorage();
+            const customerApps = appointments.filter(app => app.phone === phone);
+            
+            if (customerApps.length === 0) return;
+            
+            const customer = customerApps[0];
+            const modalBody = document.getElementById('customer-modal-body');
+            
+            modalBody.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+                    <div>
+                        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 12px; text-align: center;">
+                            <div style="width: 100px; height: 100px; background-color: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 600; margin: 0 auto 20px;">
+                                ${customer.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </div>
+                            <h3 style="color: #2c3e50; margin-bottom: 10px;">${customer.name}</h3>
+                            <div style="background-color: #fff9e6; color: #856404; padding: 8px 15px; border-radius: 20px; display: inline-block; font-size: 14px;">
+                                MÜŞ-${phone.slice(-4)}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 25px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 15px; font-size: 16px;">İletişim Bilgileri</h4>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                <i class="fas fa-phone" style="color: #3498db;"></i>
+                                <span>${phone}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-calendar-alt" style="color: #3498db;"></i>
+                                <span>Toplam Randevu: ${customerApps.length}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 18px;">Randevu Geçmişi</h4>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 28px; font-weight: 600; color: #2c3e50;">${customerApps.length}</div>
+                            <div style="font-size: 14px; color: #7f8c8d;">Toplam Randevu</div>
+                        </div>
+                        
+                        <div>
+                            <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 16px;">Son Randevular</h5>
+                            ${customerApps.length > 0 ? 
+                                customerApps.slice(0, 5).map(app => `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0;">
+                                        <div>
+                                            <div style="font-weight: 500;">${formatDateForDisplay(app.date)} - ${app.time}</div>
+                                            <div style="font-size: 13px; color: #7f8c8d;">${app.service}</div>
+                                        </div>
+                                        <div>
+                                            <span class="status-badge ${app.status}">${getStatusText(app.status)}</span>
+                                        </div>
+                                    </div>
+                                `).join('') :
+                                '<div style="text-align: center; padding: 30px; color: #7f8c8d;">Henüz randevu bulunmuyor.</div>'
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end;">
+                    <button class="btn btn-delete" onclick="deleteCustomer('${phone}')"><i class="fas fa-trash"></i> Müşteriyi Sil</button>
+                </div>
+            `;
+            
+            document.getElementById('customer-modal').style.display = 'flex';
+        }
+        
+        // Müşteri sil
+        function deleteCustomer(phone) {
+            if (confirm('Bu müşteriyi ve TÜM randevularını silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+                const appointments = getAppointmentsFromStorage();
+                const filteredAppointments = appointments.filter(app => app.phone !== phone);
+                saveAppointmentsToStorage(filteredAppointments);
+                
+                loadCustomers();
+                loadAllAppointments();
+                loadDashboardData();
+                
+                closeModal();
+                alert('Müşteri ve randevuları silindi!');
+            }
+        }
+        
+        // Randevu detaylarını görüntüle
+        function viewAppointmentDetails(appointmentId) {
+            const appointments = getAppointmentsFromStorage();
+            const appointment = appointments.find(app => app.id == appointmentId);
+            
+            if (!appointment) return;
+            
+            const modalBody = document.getElementById('appointment-modal-body');
+            modalBody.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 18px;">Randevu Bilgileri</h4>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                <div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Tarih & Saat</div>
+                                    <div style="font-size: 18px; font-weight: 600;">${formatDateForDisplay(appointment.date)} - ${appointment.time}</div>
+                                </div>
+                                <span class="status-badge ${appointment.status}">${getStatusText(appointment.status)}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-size: 12px; color: #7f8c8d;">Hizmet</div>
+                                <div style="font-size: 16px; font-weight: 500;">${appointment.service}</div>
+                            </div>
+                        </div>
+                        
+                        ${appointment.notes ? `
+                            <div style="margin-top: 20px;">
+                                <div style="font-size: 12px; color: #7f8c8d; margin-bottom: 8px;">Notlar</div>
+                                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 14px;">
+                                    ${appointment.notes}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 18px;">Müşteri Bilgileri</h4>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 60px; height: 60px; background-color: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600;">
+                                    ${appointment.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-size: 18px; font-weight: 600;">${appointment.name}</div>
+                                    <div style="font-size: 14px; color: #7f8c8d;">MÜŞ-${appointment.phone.slice(-4)}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-size: 12px; color: #7f8c8d;">Telefon</div>
+                                <div style="font-size: 16px; font-weight: 500;">${appointment.phone}</div>
+                            </div>
+                            
+                            <div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Randevu Kodu</div>
+                                <div style="font-size: 16px; font-weight: 500; color: #d4a762;">${appointment.appointmentCode}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end;">
+                    ${appointment.status === 'pending' ? 
+                        `<button class="btn btn-confirm" onclick="confirmAppointment(${appointmentId}); closeModal();"><i class="fas fa-check"></i> Onayla</button>` : 
+                        ''}
+                    ${(appointment.status !== 'cancelled' && appointment.status !== 'completed') ? 
+                        `<button class="btn btn-cancel" onclick="cancelAppointment(${appointmentId}); closeModal();"><i class="fas fa-times"></i> İptal Et</button>` : 
+                        ''}
+                    <button class="btn btn-delete" onclick="deleteAppointment(${appointmentId}); closeModal();"><i class="fas fa-trash"></i> Sil</button>
+                </div>
+            `;
+            
+            document.getElementById('appointment-modal').style.display = 'flex';
+        }
+        
+        // Modal kapat
+        function closeModal() {
+            document.getElementById('customer-modal').style.display = 'none';
+            document.getElementById('appointment-modal').style.display = 'none';
+            document.getElementById('notifications-modal').style.display = 'none';
+        }
+        
+        // Sidebar aç/kapa
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+        
+        // Bildirimleri göster
+        function showNotifications() {
+            const appointments = getAppointmentsFromStorage();
+            const today = new Date();
+            const todayFormatted = formatDateForStorage(today);
+            
+            const pendingCount = appointments.filter(app => app.status === 'pending').length;
+            const todayCount = appointments.filter(app => app.date === todayFormatted).length;
+            
+            const notificationsBody = document.getElementById('notifications-body');
+            notificationsBody.innerHTML = '';
+            
+            if (pendingCount === 0 && todayCount === 0) {
+                notificationsBody.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: #7f8c8d;">
+                        <i class="fas fa-bell-slash" style="font-size: 48px; margin-bottom: 15px; display: block; color: #ddd;"></i>
+                        <p>Yeni bildirim yok</p>
+                    </div>
+                `;
+            } else {
+                if (pendingCount > 0) {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.style.cssText = 'padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px;';
+                    notificationItem.innerHTML = `
+                        <div style="background-color: #f39c12; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;">${pendingCount} bekleyen randevu</div>
+                            <div style="font-size: 13px; color: #7f8c8d;">Onay bekleyen randevularınız var</div>
+                        </div>
+                    `;
+                    notificationsBody.appendChild(notificationItem);
+                }
+                
+                if (todayCount > 0) {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.style.cssText = 'padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px;';
+                    notificationItem.innerHTML = `
+                        <div style="background-color: #2ecc71; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;">${todayCount} randevu bugün</div>
+                            <div style="font-size: 13px; color: #7f8c8d;">Bugün için randevularınız var</div>
+                        </div>
+                    `;
+                    notificationsBody.appendChild(notificationItem);
+                }
+            }
+            
+            const markAllReadBtn = document.createElement('button');
+            markAllReadBtn.className = 'btn btn-edit';
+            markAllReadBtn.style.cssText = 'width: 100%; margin-top: 15px;';
+            markAllReadBtn.innerHTML = '<i class="fas fa-check-double"></i> Tümünü Okundu Olarak İşaretle';
+            markAllReadBtn.onclick = function() {
+                document.getElementById('notification-badge').textContent = '0';
+                closeModal();
+            };
+            
+            notificationsBody.appendChild(markAllReadBtn);
+            document.getElementById('notifications-modal').style.display = 'flex';
+        }
+        
+        // Sayfa dışına tıklayınca modal kapat
+        window.onclick = function(event) {
+            const modals = ['customer-modal', 'appointment-modal', 'notifications-modal'];
+            
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
+        
+        // Pencere yeniden boyutlandırıldığında
+        window.onresize = function() {
+            if (window.innerWidth > 1200) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>
